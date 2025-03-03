@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - Chat con Elsa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: url('imagenes/fondoweb.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+            animation: fadeIn 1.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .login-container {
+            width: 90%; /* Ancho relativo */
+            max-width: 380px; /* Ancho máximo para pantallas grandes */
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            padding: 20px; /* Reducir el padding en móviles */
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            animation: slideIn 1s ease-in-out;
+            display: none; /* Ocultar inicialmente */
+        }
+
+        @keyframes slideIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        /* Estilo mejorado para el mensaje de bienvenida */
+        .welcome-message {
+            font-family: 'Pacifico', cursive;
+            font-size: 32px;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .login-container p {
+            font-size: 16px;
+            color: #444;
+            font-weight: 400;
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 90%;
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            text-align: center;
+            font-size: 16px;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-field:focus {
+            border-color: #075e54;
+            box-shadow: 0 0 8px rgba(7, 94, 84, 0.3);
+            outline: none;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #888;
+        }
+
+        .password-toggle:hover {
+            color: #075e54;
+        }
+
+        .login-btn {
+            background: linear-gradient(to right, #25d366, #128c7e);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 18px;
+            font-weight: bold;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            display: none;
+            font-size: 14px;
+        }
+
+        .elsa-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Estilos para la ventana modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            width: 300px;
+            text-align: center;
+        }
+
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+        .modal input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        .modal button {
+            background: linear-gradient(to right, #25d366, #128c7e);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .modal button:hover {
+            transform: scale(1.05);
+        }
+
+        .modal .close-btn {
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .modal .close-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 600px) {
+            .login-container {
+                padding: 15px; /* Menos padding en móviles */
+            }
+
+            .welcome-message {
+                font-size: 28px; /* Reducir el tamaño de la fuente */
+            }
+
+            .input-field {
+                font-size: 14px; /* Reducir el tamaño de la fuente */
+            }
+
+            .login-btn {
+                font-size: 16px; /* Reducir el tamaño de la fuente */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Audio de bienvenida -->
+    <audio id="welcomeAudio" src="audios/bienvenida.mp3"></audio>
+
+    <div class="login-container" id="loginContainer">
+        <img src="imagenes/elsa-avatar.png" alt="Elsa" class="elsa-avatar">
+        <h2 class="welcome-message">Bienvenido/a</h2>
+        <h2 class="welcome-message">"Mi Amiga Elsa" 💙</h2>
+        <p>"No estás solo/a. Juntos aprenderemos a manejar la ansiedad y la depresión."</p>
+        <form id="loginForm">
+            <input type="text" name="username" class="input-field" placeholder="Usuario" required>
+            <div class="password-container">
+                <input type="password" name="password" id="password" class="input-field" placeholder="Contraseña" required>
+                <i class="fas fa-eye password-toggle" onclick="togglePasswordVisibility()"></i>
+            </div>
+            <button type="submit" class="login-btn">Iniciar Sesión</button>
+        </form>
+        <p class="error-message" id="errorMessage">❌ Elsa: "No estás registrado en mi plataforma, verifica tu usuario y contraseña. Gracias 💙."</p>
+    </div>
+
+    <!-- Ventana modal para la clave de administrador -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+    <div class="modal" id="adminModal">
+        <h2>Clave de Administrador</h2>
+        <input type="password" id="adminKey" placeholder="Ingrese la clave de administrador">
+        <button onclick="validarClaveAdministrador()">Entrar</button>
+        <button class="close-btn" onclick="cerrarModal()">Cerrar</button>
+        <p class="error-message" id="modalErrorMessage" style="display: none; color: red; font-size: 14px;">Clave incorrecta.</p>
+    </div>
+
+    <script>
+        // Verificar si el usuario ya ha completado la introducción
+        if (localStorage.getItem('introCompleta') === 'true') {
+            // Redirigir directamente al menú principal
+            window.location.href = "menuprincipal.html";
+        }
+
+        // Ocultar el contenedor de inicio de sesión inicialmente
+        const loginContainer = document.getElementById('loginContainer');
+        loginContainer.style.display = 'none';
+
+        // Variable de estado para controlar si el audio ya se ha reproducido
+        let audioReproducido = false;
+
+        // Reproducir el audio de bienvenida al tocar la pantalla
+        document.body.addEventListener('click', (event) => {
+            // Verificar si el clic fue en un campo de entrada o en el botón
+            if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON' || event.target.classList.contains('password-toggle')) {
+                return; // Ignorar clics en campos de entrada o botones
+            }
+
+            if (!audioReproducido) {
+                const welcomeAudio = document.getElementById('welcomeAudio');
+                welcomeAudio.play().catch(error => {
+                    console.log("La reproducción automática del audio fue bloqueada. Toca la pantalla para reproducir.");
+                });
+
+                // Marcar el audio como reproducido
+                audioReproducido = true;
+
+                // Mostrar el contenedor de inicio de sesión cuando el audio termine
+                welcomeAudio.addEventListener('ended', () => {
+                    loginContainer.style.display = 'block';
+                    loginContainer.style.animation = 'slideIn 1s ease-in-out'; // Aplicar animación
+
+                    // Marcar la introducción como completada
+                    localStorage.setItem('introCompleta', 'true');
+                });
+            }
+        });
+
+        // Función para mostrar/ocultar la contraseña
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.querySelector('.password-toggle');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Función para validar el inicio de sesión
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita el envío del formulario
+
+            const username = document.querySelector('input[name="username"]').value;
+            const password = document.querySelector('input[name="password"]').value;
+
+            // Verificar si es el usuario y contraseña especial
+            if (username === 'ricardorca1' && password === 'sony810815') {
+                // Mostrar la ventana modal
+                document.getElementById('modalOverlay').style.display = 'block';
+                document.getElementById('adminModal').style.display = 'block';
+            } else {
+                // Validar contra el archivo usuarios.txt
+                fetch('usuarios.txt')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Error al cargar el archivo de usuarios');
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        const usuarios = data.split('\n'); // Divide el archivo por líneas
+                        let credencialesCorrectas = false;
+
+                        usuarios.forEach(usuario => {
+                            const [usuarioGuardado, contraseñaGuardada] = usuario.split(','); // Separa usuario y contraseña
+                            if (usuarioGuardado.trim() === username && contraseñaGuardada.trim() === password) {
+                                credencialesCorrectas = true;
+                            }
+                        });
+
+                        if (credencialesCorrectas) {
+                            // Guardar el nombre del usuario en localStorage
+                            localStorage.setItem('nombreUsuario', username);
+
+                            // Redirigir al menú principal
+                            window.location.href = "menuprincipal.html";
+                        } else {
+                            document.getElementById('errorMessage').style.display = 'block'; // Muestra el mensaje de error
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error al leer el archivo de usuarios:', error);
+                        document.getElementById('errorMessage').style.display = 'block'; // Muestra el mensaje de error
+                    });
+            }
+        });
+
+        // Función para validar la clave de administrador
+        function validarClaveAdministrador() {
+            const clave = document.getElementById('adminKey').value;
+
+            fetch('clavedeadministrador.txt')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Error al cargar el archivo de clave de administrador');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    if (data.trim() === clave) {
+                        // Clave correcta: abrir administrador.html en una nueva pestaña
+                        window.open('administrador.html', '_blank');
+                        // Cerrar la ventana modal
+                        cerrarModal();
+                    } else {
+                        // Clave incorrecta: mostrar mensaje de error
+                        document.getElementById('modalErrorMessage').style.display = 'block';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error al leer el archivo de clave de administrador:', error);
+                    document.getElementById('modalErrorMessage').style.display = 'block';
+                });
+        }
+
+        // Función para cerrar la ventana modal
+        function cerrarModal() {
+            document.getElementById('modalOverlay').style.display = 'none';
+            document.getElementById('adminModal').style.display = 'none';
+            document.getElementById('modalErrorMessage').style.display = 'none'; // Limpiar mensaje de error
+        }
+    </script>
+</body>
+</html>

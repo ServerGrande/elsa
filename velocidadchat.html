@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VelocidadChat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .control-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+        .slider-container {
+            margin: 20px 0;
+        }
+        .slider-container label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        .slider {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="control-panel">
+        <h1>VelocidadChat</h1>
+        <div class="slider-container">
+            <label for="typingDelay">Tiempo de espera (ms): <span id="typingDelayValue">2000</span></label>
+            <input type="range" id="typingDelay" class="slider" min="500" max="5000" value="2000">
+        </div>
+        <div class="slider-container">
+            <label for="fadeDuration">Duración del efecto (ms): <span id="fadeDurationValue">500</span></label>
+            <input type="range" id="fadeDuration" class="slider" min="100" max="2000" value="500">
+        </div>
+    </div>
+
+    <script>
+        // Obtener referencias a los sliders y sus valores
+        const typingDelaySlider = document.getElementById("typingDelay");
+        const typingDelayValue = document.getElementById("typingDelayValue");
+        const fadeDurationSlider = document.getElementById("fadeDuration");
+        const fadeDurationValue = document.getElementById("fadeDurationValue");
+
+        // Actualizar los valores en tiempo real
+        typingDelaySlider.addEventListener("input", () => {
+            typingDelayValue.textContent = typingDelaySlider.value;
+            updateChatSettings();
+        });
+
+        fadeDurationSlider.addEventListener("input", () => {
+            fadeDurationValue.textContent = fadeDurationSlider.value;
+            updateChatSettings();
+        });
+
+        // Función para actualizar la configuración del chat
+        function updateChatSettings() {
+            const typingDelay = parseInt(typingDelaySlider.value);
+            const fadeDuration = parseInt(fadeDurationSlider.value);
+
+            // Enviar los nuevos valores al chat (usando localStorage)
+            localStorage.setItem("typingDelay", typingDelay);
+            localStorage.setItem("fadeDuration", fadeDuration);
+        }
+    </script>
+
+</body>
+</html>

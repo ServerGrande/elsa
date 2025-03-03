@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat con Elsa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #ece5dd, #d2dbdc);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .chat-container {
+            width: 400px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .chat-header {
+            background-color: #075e54;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .chapter-title {
+            background-color: #128c7e;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        .chat-box {
+            height: 350px;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            scroll-behavior: smooth;
+        }
+        .message {
+            max-width: 75%;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 15px;
+            line-height: 1.4;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+            opacity: 0; /* Inicialmente invisible */
+            transition: opacity 0.5s ease-in-out; /* Efecto de desvanecimiento */
+        }
+        .elsa {
+            background-color: #dcf8c6;
+            align-self: flex-start;
+        }
+        .user {
+            background-color: #34b7f1;
+            color: white;
+            align-self: flex-end;
+        }
+        .options-container {
+            background-color: white;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .option {
+            background-color: #25d366;
+            color: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            width: 90%;
+            font-weight: bold;
+        }
+        .option:hover {
+            background-color: #128c7e;
+        }
+        .typing-indicator {
+            font-style: italic;
+            color: gray;
+            text-align: left;
+            margin: 5px;
+            opacity: 0; /* Inicialmente invisible */
+            transition: opacity 0.5s ease-in-out; /* Efecto de desvanecimiento */
+        }
+        .input-container {
+            display: none;
+            flex-direction: column;
+            padding: 10px;
+            border-top: 1px solid #ccc;
+        }
+        .input-field {
+            width: 100%;
+            padding: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .send-btn {
+            margin-top: 5px;
+            padding: 10px;
+            background-color: #25d366;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chat-container">
+        <div class="chat-header">Chat con Elsa 💙</div>
+        <div class="chapter-title" id="chapterTitle">Cargando capítulo...</div>
+        <div class="chat-box" id="chatBox"></div>
+        <div class="typing-indicator" id="typingIndicator">Elsa está escribiendo</div>
+        <div class="options-container" id="options"></div>
+        <div class="input-container" id="inputContainer">
+            <input type="text" id="userResponse" class="input-field" placeholder="Escribe tu respuesta...">
+            <button class="send-btn" onclick="sendUserResponse()">Enviar</button>
+        </div>
+    </div>
+
+    <script>
+        let currentChapter = "capitulo1.json";
+        let username = localStorage.getItem("username");
+        let currentQuestion = ""; 
+        let chapterData; // Variable global para almacenar los datos del capítulo
+
+        async function loadChat(chapterFile) {
+            try {
+                let response = await fetch(chapterFile);
+                if (!response.ok) throw new Error(`Error al cargar JSON: ${response.status}`);
+                chapterData = await response.json(); // Guardar los datos del capítulo
+                console.log("📜 JSON Cargado:", chapterData);
+                document.getElementById("chapterTitle").textContent = chapterData.titulo;
+
+                // Cargar el progreso del usuario
+                await loadProgress();
+
+                startChat(chapterData);
+            } catch (error) {
+                console.error("⛔ Error en fetch():", error);
+            }
+        }
+
+        function showTypingIndicator() {
+            let typingIndicator = document.getElementById("typingIndicator");
+            typingIndicator.style.opacity = "1"; // Mostrar con efecto de desvanecimiento
+            typingIndicator.style.color = "#ff69b4"; // Color rosa
+            typeDots(typingIndicator); // Iniciar el efecto de puntitos
+        }
+
+        function hideTypingIndicator() {
+            let typingIndicator = document.getElementById("typingIndicator");
+            typingIndicator.style.opacity = "0"; // Ocultar con efecto de desvanecimiento
+            typingIndicator.textContent = "Elsa está escribiendo"; // Restaurar el texto sin puntitos
+        }
+
+        function typeDots(element) {
+            let dots = "";
+            let dotCount = 0;
+            let dotInterval = setInterval(() => {
+                if (dotCount < 3) {
+                    dots += ".";
+                    dotCount++;
+                } else {
+                    dots = "";
+                    dotCount = 0;
+                }
+                element.textContent = `Elsa está escribiendo${dots}`;
+            }, 500); // Cada 500ms se añade o reinicia un puntito
+        }
+
+        function typeText(element, text, callback) {
+            let i = 0;
+            let interval = setInterval(() => {
+                if (i < text.length) {
+                    element.textContent += text.charAt(i);
+                    i++;
+                    scrollChatToBottom();
+                } else {
+                    clearInterval(interval);
+                    if (callback) callback(); // Llamar al callback si existe
+                }
+            }, 100); // Velocidad de escritura (100ms por carácter)
+        }
+
+        function showMessageWithTyping(element, text, callback) {
+    showTypingIndicator(); // Mostrar "Elsa está escribiendo..." con efecto de puntitos
+
+    // Simular un retraso antes de mostrar el mensaje completo
+    setTimeout(() => {
+        hideTypingIndicator(); // Ocultar "Elsa está escribiendo..."
+        element.style.opacity = "1"; // Mostrar el mensaje con efecto de desvanecimiento
+        typeText(element, text, () => {
+            if (callback) callback(); // Llamar al callback si existe
+
+            // Guardar el progreso después de que Elsa termina de narrar
+            console.log("Guardando progreso..."); // Depuración
+            saveProgress(); // Llamada a saveProgress
+        });
+        scrollChatToBottom();
+    }, 3000); // Retraso de 3 segundos antes de comenzar a escribir
+}
+
+        function sendUserResponse() {
+            let inputField = document.getElementById("userResponse");
+            let userText = inputField.value.trim();
+            if (userText !== "") {
+                let chatBox = document.getElementById("chatBox");
+                let userMessage = document.createElement("div");
+                userMessage.classList.add("message", "user");
+                userMessage.textContent = userText;
+                userMessage.style.opacity = "1"; // Mostrar el mensaje del usuario con efecto de desvanecimiento
+                chatBox.appendChild(userMessage);
+                saveDiaryEntry(currentQuestion, userText);
+                inputField.value = "";
+                document.getElementById("inputContainer").style.display = "none";
+                scrollChatToBottom();
+
+                // Guardar el progreso después de enviar un mensaje
+                saveProgress();
+            }
+        }
+
+        async function saveDiaryEntry(question, response) {
+            if (!username) return;
+            await fetch("save_diary.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `username=${username}&question=${encodeURIComponent(question)}&response=${encodeURIComponent(response)}`
+            });
+        }
+
+        function startChat(data) {
+            let chatBox = document.getElementById("chatBox");
+            chatBox.innerHTML = "";
+            showMessage(0);
+        }
+
+        function showMessage(index) {
+            if (index >= chapterData.mensajes.length) return;
+
+            let msg = chapterData.mensajes[index];
+            let elsaMessage = document.createElement("div");
+            elsaMessage.classList.add("message", "elsa");
+            chatBox.appendChild(elsaMessage);
+
+            // Mostrar el mensaje con el indicador de "Elsa está escribiendo..."
+            showMessageWithTyping(elsaMessage, msg.texto, () => {
+                if (msg.texto.includes("comparte conmigo aquí en el chat")) {
+                    document.getElementById("inputContainer").style.display = "flex";
+                    currentQuestion = msg.texto;
+                } else if (msg.opciones) {
+                    showOptions(msg.opciones, msg.texto, index);
+                } else {
+                    setTimeout(() => showMessage(index + 1), 1000); // Esperar 1 segundo antes del siguiente mensaje
+                }
+            });
+        }
+
+        function showOptions(options, questionText, index) {
+            let optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            optionsContainer.style.display = "block";
+
+            options.forEach(option => {
+                let button = document.createElement("div");
+                button.classList.add("option");
+                button.textContent = option.texto;
+                button.onclick = () => {
+                    // Mostrar la opción seleccionada por el usuario
+                    let chatBox = document.getElementById("chatBox");
+                    let userMessage = document.createElement("div");
+                    userMessage.classList.add("message", "user");
+                    userMessage.textContent = option.texto;
+                    userMessage.style.opacity = "1"; // Mostrar el mensaje del usuario con efecto de desvanecimiento
+                    chatBox.appendChild(userMessage);
+
+                    // Ocultar las opciones
+                    optionsContainer.style.display = "none";
+
+                    // Guardar la elección del usuario
+                    saveUserChoice(questionText, option.texto);
+
+                    // Mostrar la respuesta de Elsa
+                    let responseMessage = document.createElement("div");
+                    responseMessage.classList.add("message", "elsa");
+                    chatBox.appendChild(responseMessage);
+
+                    // Mostrar la respuesta con el indicador de "Elsa está escribiendo..."
+                    showMessageWithTyping(responseMessage, option.respuesta, () => {
+                        // Verificar si el siguiente mensaje tiene opciones múltiples
+                        let nextMessage = chapterData.mensajes[index + 1];
+                        if (nextMessage && nextMessage.opciones) {
+                            showOptions(nextMessage.opciones, nextMessage.texto, index + 1);
+                        } else {
+                            // Continuar con el siguiente mensaje
+                            setTimeout(() => showMessage(index + 1), 1000); // Esperar 1 segundo antes del siguiente mensaje
+                        }
+                    });
+
+                    // Guardar el progreso después de seleccionar una opción
+                    saveProgress();
+                };
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function saveUserChoice(question, answer) {
+            if (!username) return;
+            fetch("save_chat.php", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `username=${username}&question=${encodeURIComponent(question)}&answer=${encodeURIComponent(answer)}`
+            });
+        }
+
+        function scrollChatToBottom() {
+            let chatBox = document.getElementById("chatBox");
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // Función para guardar el progreso del usuario
+        async function saveProgress() {
+    console.log("Ejecutando saveProgress..."); // Depuración
+    const username = localStorage.getItem("username");
+    if (!username) {
+        console.error("Nombre de usuario no encontrado");
+        return;
+    }
+
+    const progress = {
+        currentChapter,
+        messages: Array.from(document.getElementById("chatBox").children).map(message => ({
+            text: message.textContent,
+            type: message.classList.contains("elsa") ? "elsa" : "user",
+        })),
+    };
+
+    console.log("Datos a enviar:", progress); // Depuración
+
+    try {
+        console.log("Enviando solicitud a save_progress.php..."); // Depuración
+        const response = await fetch("save_progress.php", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `username=${username}&progress=${encodeURIComponent(JSON.stringify(progress))}`,
+        });
+
+        if (!response.ok) throw new Error("Error al guardar el progreso");
+        const data = await response.json();
+        console.log("Respuesta del servidor:", data); // Depuración
+    } catch (error) {
+        console.error("Error al guardar el progreso:", error);
+    }
+}
+
+        // Función para cargar el progreso del usuario
+        async function loadProgress() {
+            const username = localStorage.getItem("username");
+            if (!username) return;
+
+            try {
+                const response = await fetch(`load_progress.php?username=${username}`);
+                if (!response.ok) throw new Error("Error al cargar el progreso");
+                const progress = await response.json();
+
+                if (progress) {
+                    currentChapter = progress.currentChapter;
+                    loadChat(currentChapter); // Cargar el capítulo actual
+
+                    // Mostrar los mensajes guardados
+                    const chatBox = document.getElementById("chatBox");
+                    progress.messages.forEach(message => {
+                        const messageElement = document.createElement("div");
+                        messageElement.classList.add("message", message.type);
+                        messageElement.textContent = message.text;
+                        messageElement.style.opacity = "1"; // Mostrar el mensaje con efecto de desvanecimiento
+                        chatBox.appendChild(messageElement);
+                    });
+                    scrollChatToBottom();
+                }
+            } catch (error) {
+                console.error("Error al cargar el progreso:", error);
+            }
+        }
+
+        loadChat(currentChapter);
+    </script>
+</body>
+</html>

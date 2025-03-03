@@ -1,0 +1,93 @@
+/* intro.css */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #ece5dd, #d2dbdc);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.welcome-screen {
+    width: 90%;
+    max-width: 600px;
+    background-color: white;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    text-align: center;
+    opacity: 0; /* Inicialmente invisible */
+    transform: scale(0.9); /* Escala inicial más pequeña */
+    animation: fadeInScale 1s ease-in-out forwards; /* Animación de entrada */
+}
+
+@keyframes fadeInScale {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.welcome-content h1, .welcome-content h2 {
+    color: #075e54;
+}
+
+.welcome-content p, .welcome-content ul {
+    color: #333;
+    line-height: 1.6;
+}
+
+.welcome-content ul {
+    text-align: left;
+    padding-left: 20px;
+}
+
+.intro-section {
+    display: none; /* Oculta todas las secciones inicialmente */
+}
+
+.intro-section.active {
+    display: block; /* Muestra solo la sección activa */
+}
+
+.navigation-buttons {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.nav-btn {
+    background-color: #25d366;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.nav-btn:hover {
+    background-color: #128c7e;
+}
+
+.start-btn {
+    background-color: #ff69b4;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    display: none; /* Oculto inicialmente */
+}
+
+.start-btn:hover {
+    background-color: #ff1493;
+}

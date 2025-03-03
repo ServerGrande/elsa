@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Validación de Libro - Chat con Elsa</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+            text-align: center;
+            padding: 20px;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .message-box {
+            width: 90%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            opacity: 0;
+            transform: translateY(-20px);
+            transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+        }
+
+        .message-content {
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .input-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+        }
+
+        .input-field {
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .validate-btn {
+            background: linear-gradient(to right, #25d366, #128c7e);
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            max-width: 300px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 10px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .validate-btn:hover {
+            transform: scale(1.05);
+        }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+            display: none;
+            font-size: 14px;
+        }
+
+        /* Animación de transición */
+        .transition-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to right, #6dd5ed, #2193b0);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .transition-text {
+            font-size: 2rem;
+            font-weight: bold;
+            color: white;
+            white-space: nowrap;
+            opacity: 0;
+            animation: moveText 4s linear infinite;
+        }
+
+        @keyframes moveText {
+            0% {
+                transform: translateX(100%);
+                opacity: 1;
+            }
+            100% {
+                transform: translateX(-100%);
+                opacity: 1;
+            }
+        }
+
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 600px) {
+            .message-box {
+                padding: 15px;
+            }
+
+            .transition-text {
+                font-size: 1.5rem;
+            }
+
+            .input-field, .validate-btn {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="message-box" id="messageBox">
+        <div class="message-content" id="messageContent">
+            <h3>Bienvenido/a a Chat con Elsa 💙</h3>
+            <p>Hola, soy Elsa. Me alegra que estés aquí. Este espacio te ayudará a gestionar la ansiedad y la depresión a través de un acompañamiento especial. 💙</p>
+            <p>Para empezar, por favor ingresa el código único de tu libro.</p>
+            <p>Este código quedará registrado en este dispositivo. Solo se te pedirá una vez.</p>
+            <div class="input-container" id="inputContainer">
+                <input type="text" id="bookCode" class="input-field" placeholder="Ingresa tu código">
+                <button class="validate-btn" onclick="validateCode()">Validar Código</button>
+                <p class="error-message" id="errorMessage">❌ Código incorrecto, por favor verifica tu código.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pantalla de transición -->
+    <div class="transition-screen" id="transitionScreen">
+        <div class="transition-text" id="transitionText">💙 Elsa te espera 💙</div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let savedCode = localStorage.getItem("bookCode");
+            if (savedCode) {
+                window.location.href = "chat.html"; // Si ya tiene código, entra directo
+            } else {
+                setTimeout(() => {
+                    let messageBox = document.getElementById("messageBox");
+                    let messageContent = document.getElementById("messageContent");
+                    messageBox.style.opacity = "1";
+                    messageBox.style.transform = "translateY(0)";
+                    
+                    setTimeout(() => {
+                        messageContent.style.opacity = "1";
+                        setTimeout(() => {
+                            let inputContainer = document.getElementById("inputContainer");
+                            inputContainer.style.display = "block";
+                            setTimeout(() => {
+                                inputContainer.style.opacity = "1";
+                                inputContainer.style.transform = "translateY(0)";
+                            }, 500);
+                        }, 2000);
+                    }, 1000);
+                }, 3000);
+            }
+        });
+
+        async function validateCode() {
+            let bookCode = document.getElementById("bookCode").value;
+            let errorMessage = document.getElementById("errorMessage");
+            
+            try {
+                let response = await fetch("codigos.txt");
+                let data = await response.text();
+                let codes = data.split("\n").map(code => code.trim());
+                
+                if (codes.includes(bookCode)) {
+                    localStorage.setItem("bookCode", bookCode); // Guarda el código
+
+                    // Mostrar animación de transición
+                    let transitionScreen = document.getElementById("transitionScreen");
+                    let transitionText = document.getElementById("transitionText");
+
+                    transitionScreen.style.opacity = "1";
+                    transitionScreen.style.pointerEvents = "auto";
+
+                    // Activar la animación del texto
+                    transitionText.style.opacity = "1";
+
+                    // Esperar a que termine la animación antes de redirigir
+                    setTimeout(() => {
+                        window.location.href = "introduccion.html";
+                    }, 4000); // Esperar 4 segundos antes de redirigir
+                } else {
+                    errorMessage.style.display = "block";
+                }
+            } catch (error) {
+                console.error("Error al cargar códigos", error);
+            }
+        }
+    </script>
+</body>
+</html>

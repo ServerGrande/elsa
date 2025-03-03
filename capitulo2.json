@@ -1,0 +1,23 @@
+{
+  "titulo": "Capítulo 2: Técnicas para Manejar la Ansiedad",
+  "mensajes": [
+    {
+      "tipo": "elsa",
+      "texto": "Ahora que sabes qué es la ansiedad, quiero enseñarte algunas técnicas para manejarla. ¿Listo/a?"
+    },
+    {
+      "tipo": "opciones",
+      "opciones": [
+        {
+          "texto": "Sí, dime las técnicas.",
+          "respuesta": "Una de las mejores técnicas es la respiración diafragmática. Vamos a practicarla juntos. 😊"
+        },
+        {
+          "texto": "No sé si esto funcione para mí.",
+          "respuesta": "Entiendo, a veces puede ser difícil al principio, pero te ayudaré a intentarlo poco a poco."
+        }
+      ]
+    }
+  ],
+  "siguiente": "capitulo3.json"
+}

@@ -1,0 +1,28 @@
+{
+  "titulo": "Capítulo 1: Introducción a la Ansiedad y la Depresión",
+  "mensajes": [
+    {
+      "tipo": "elsa",
+      "texto": "Hola, soy Elsa. ¿Te gustaría que te cuente qué es la ansiedad y la depresión? 💙",
+      "opciones": [
+        {
+          "texto": "Sí, cuéntame.",
+          "respuesta": "La ansiedad es como tener muchas apps abiertas en tu mente 📱. ¿Te ha pasado?"
+        },
+        {
+          "texto": "No estoy seguro/a.",
+          "respuesta": "No te preocupes, aquí estoy para ayudarte a entenderlo."
+        }
+      ]
+    },
+    {
+      "tipo": "elsa",
+      "texto": "Cuando hablamos de ansiedad, nos referimos a una respuesta natural del cuerpo ante el estrés..."
+    },
+    {
+      "tipo": "elsa",
+      "texto": "Por otro lado, la depresión se siente como si la energía se drenara por completo..."
+    }
+  ],
+  "siguiente": "capitulo2.json"
+}

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Introducción al Chat con Elsa</title>
+    <link rel="stylesheet" href="intro.css"> <!-- Enlaza el CSS de la introducción -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Quicksand:wght@400;500;700&display=swap" rel="stylesheet"> <!-- Nueva fuente -->
+    <style>
+        /* Estilos generales */
+        body {
+            font-family: 'Quicksand', sans-serif; /* Fuente más suave y moderna */
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #a8edea, #fed6e3); /* Gradiente suave */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            animation: gradientAnimation 10s ease infinite; /* Animación del gradiente */
+        }
+
+        @keyframes gradientAnimation {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .welcome-screen {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(255, 255, 255, 0.9); /* Fondo semi-transparente */
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px); /* Efecto de desenfoque */
+        }
+
+        .welcome-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .intro-section {
+            display: none;
+            padding: 20px;
+        }
+
+        .intro-section.active {
+            display: block;
+        }
+
+        h1, h2 {
+            color: #2c3e50; /* Color oscuro para títulos */
+            font-family: 'Poppins', sans-serif; /* Fuente moderna para títulos */
+            font-weight: 600;
+            text-align: center; /* Centrar títulos */
+        }
+
+        h1 {
+            font-size: 32px; /* Tamaño grande para el título principal */
+        }
+
+        h2 {
+            font-size: 28px; /* Tamaño grande para subtítulos */
+        }
+
+        p, li {
+            color: #34495e; /* Color oscuro para texto */
+            font-size: 18px; /* Tamaño más grande para mejor legibilidad */
+            line-height: 1.8; /* Espaciado entre líneas */
+            font-weight: 500; /* Texto en negritas */
+            text-align: justify; /* Texto justificado */
+        }
+
+        ul {
+            text-align: left;
+            margin: 20px 0;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        strong {
+            font-weight: 700; /* Negritas más pronunciadas */
+        }
+
+        .navigation-buttons {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .nav-btn, .start-btn {
+            background: linear-gradient(to right, #6a89cc, #82ccdd); /* Botones con gradiente suave */
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 18px; /* Tamaño más grande para botones */
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+
+        .nav-btn:hover, .start-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(106, 137, 204, 0.3); /* Sombra al hacer hover */
+        }
+
+        .start-btn {
+            display: none; /* Ocultar inicialmente */
+            margin-top: 20px;
+        }
+
+        /* Ajustes para pantallas pequeñas */
+        @media (max-width: 600px) {
+            .welcome-screen {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            p, li {
+                font-size: 16px;
+            }
+
+            .nav-btn, .start-btn {
+                font-size: 16px;
+                padding: 10px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-content">
+            <!-- Secciones de la introducción -->
+            <div class="intro-section active" id="section1">
+                <h1>¡Bienvenido al Chat con Elsa! 💙</h1>
+                <p>Antes de comenzar, te explicamos cómo funciona este espacio único para que puedas disfrutarlo al máximo.</p>
+            </div>
+            <div class="intro-section" id="section2">
+                <h2>¿Qué es este chat?</h2>
+                <p>Este es un espacio interactivo donde podrás conversar con Elsa, la protagonista de este libro. A través de preguntas y respuestas, Elsa te guiará en una experiencia personalizada relacionada con la historia.</p>
+            </div>
+            <div class="intro-section" id="section3">
+                <h2>¿Cómo funciona?</h2>
+                <ul>
+                    <li><strong>Elsa te hará preguntas:</strong> Responde con sinceridad para que la conversación fluya de manera natural.</li>
+                    <li><strong>Opciones de respuesta:</strong> En algunos momentos, Elsa te dará opciones para elegir. Selecciona la que más se ajuste a tus pensamientos o sentimientos.</li>
+                    <li><strong>Escribe tus propias respuestas:</strong> En ciertos momentos, podrás escribir libremente lo que desees compartir.</li>
+                </ul>
+            </div>
+            <div class="intro-section" id="section4">
+                <h2>Dinámicas del Chat</h2>
+                <ul>
+                    <li><strong>Velocidad de respuesta:</strong> Elsa escribe de manera lenta y natural, como si estuviera pensando en cada palabra. ¡Tómate tu tiempo para leer!</li>
+                    <li><strong>Indicador de escritura:</strong> Cuando veas el mensaje "Elsa está escribiendo..." en color rosa, significa que está preparando su respuesta.</li>
+                    <li><strong>Guarda tus respuestas:</strong> Todas tus interacciones se guardarán en un diario personal (si decides usarlo).</li>
+                </ul>
+            </div>
+            <div class="intro-section" id="section5">
+                <h2>Consejos para disfrutar al máximo</h2>
+                <ul>
+                    <li><strong>Relájate y sé tú mismo:</strong> No hay respuestas correctas o incorrectas. Este chat es un espacio seguro para expresarte.</li>
+                    <li><strong>Lee con calma:</strong> Tómate tu tiempo para disfrutar cada mensaje y reflexionar sobre las preguntas.</li>
+                    <li><strong>Explora todas las opciones:</strong> Siéntete libre de volver atrás y elegir diferentes respuestas para descubrir nuevas perspectivas.</li>
+                </ul>
+            </div>
+            <div class="intro-section" id="section6">
+                <h2>🌎 ¿Qué hace especial a este chat?</h2>
+                <p>Elsa no es solo un chat, es una experiencia de autoayuda en la que tendrás una amiga virtual que te escuchará, te guiará y te dará herramientas prácticas para que puedas sentirte mejor en tu día a día.</p>
+                <p>Aquí, no estarás solo/a. Cada conversación con Elsa es una oportunidad para aprender más sobre ti mismo/a, entender tus emociones y trabajar en tu bienestar a través de ejercicios y dinámicas interactivas. 📝💖</p>
+            </div>
+            <div class="intro-section" id="section7">
+                <h2>📌 ¿Cómo funciona?</h2>
+                <ul>
+                    <li><strong>Elsa te hablará como una amiga cercana:</strong> Explicándote poco a poco lo que necesitas saber sobre la ansiedad y la depresión. 🧠💙</li>
+                    <li><strong>Preguntas y opciones de respuesta:</strong> En algunos momentos, Elsa te hará preguntas y te dará opciones de respuesta. Solo debes elegir la que mejor represente cómo te sientes. 📲🔘</li>
+                    <li><strong>Ejercicios de escritura:</strong> También habrá ejercicios donde podrás escribir tus pensamientos. Elsa te pedirá que los compartas con ella, y todo quedará guardado en tu diario digital. 📝💭</li>
+                    <li><strong>No hay respuestas correctas o incorrectas:</strong> Este espacio es tuyo, para que explores y descubras lo que mejor te funciona.</li>
+                </ul>
+            </div>
+            <div class="intro-section" id="section8">
+                <h2>⏳ ¿Cuánto dura este libro-chat?</h2>
+                <p>📖 "Mi Amiga Elsa" es un programa interactivo que puedes recorrer a tu ritmo. La idea es que dediques unos minutos cada día, o cuando lo necesites, para conversar con Elsa y hacer los ejercicios.</p>
+                <p>El chat está diseñado para acompañarte durante varias semanas, pero tú decides el tiempo y la frecuencia con la que avanzas. Lo más importante es que te sientas cómodo/a y que disfrutes el proceso. 💙✨</p>
+            </div>
+            <div class="intro-section" id="section9">
+                <h2>🌟 ¿Listo para empezar?</h2>
+                <p>Solo relájate, respira profundo y deja que Elsa te guíe. No tienes que hacerlo todo de una vez, ve a tu propio ritmo y confía en que cada pequeño paso cuenta. 🌿💪</p>
+                <p>Elsa está aquí para ti. ¡Vamos juntos en este viaje! 🚀💙</p>
+            </div>
+
+            <!-- Botones de navegación -->
+            <div class="navigation-buttons">
+                <button class="nav-btn" id="prevBtn" onclick="prevSection()">Atrás</button>
+                <button class="nav-btn" id="nextBtn" onclick="nextSection()">Adelante</button>
+            </div>
+
+            <!-- Botón "Ir al chat" (oculto inicialmente) -->
+            <button class="start-btn" id="startBtn" onclick="startChatWithElsa()">Ir al Menu Principal</button>
+        </div>
+    </div>
+    <script>
+        // Lógica para navegar entre las secciones
+        let currentSection = 1;
+        const totalSections = 9;
+
+        function showSection(sectionNumber) {
+            document.querySelectorAll('.intro-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(`section${sectionNumber}`).classList.add('active');
+
+            // Mostrar u ocultar botones de navegación
+            document.getElementById('prevBtn').style.display = sectionNumber === 1 ? 'none' : 'block';
+            document.getElementById('nextBtn').style.display = sectionNumber === totalSections ? 'none' : 'block';
+
+            // Si es la última sección, iniciar el proceso de audio
+            if (sectionNumber === totalSections) {
+                startAudioProcess();
+            }
+        }
+
+        function nextSection() {
+            if (currentSection < totalSections) {
+                currentSection++;
+                showSection(currentSection);
+            }
+        }
+
+        function prevSection() {
+            if (currentSection > 1) {
+                currentSection--;
+                showSection(currentSection);
+            }
+        }
+
+        function startChatWithElsa() {
+            window.location.href = "menuprincipal.html"; // Redirige a la página del chat
+        }
+
+        // Función para manejar el proceso de audio
+        function startAudioProcess() {
+            const startBtn = document.getElementById('startBtn');
+            startBtn.style.display = 'none'; // Asegurarse de que el botón esté oculto
+
+            // Reproducir el audio después de 10 segundos
+            setTimeout(() => {
+                const audio = new Audio('audios/introduccion.mp3');
+                audio.play().catch(error => {
+                    console.log("La reproducción automática del audio fue bloqueada. Toca la pantalla para reproducir.");
+                });
+
+                // Mostrar el botón "Ir al chat" cuando el audio termine
+                audio.addEventListener('ended', () => {
+                    startBtn.style.display = 'block';
+                });
+            }, 10000); // 10 segundos de espera
+        }
+
+        // Mostrar la primera sección al cargar la página
+        showSection(currentSection);
+    </script>
+</body>
+</html>
